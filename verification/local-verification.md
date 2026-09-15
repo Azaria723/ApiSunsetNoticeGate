@@ -1,7 +1,7 @@
 # Local verification
 
-- Direct Mode contract tests: `22 passed`.
-- Contract source SHA-256: `456cbecc28ca48548d88b1b3fe38198858872b7eac6c02b574160aeb45a2037c`.
+- Direct Mode contract tests: `23 passed`.
+- Contract source SHA-256: `94a53cbbdd0e8ef7a049278f4975b857164462bd3ffdaef6864adeb8f1a7e728`.
 - Contract runner and dependency are pinned to `genlayer-test 0.2.16` metadata.
 - Web and LLM access use strict mocks.
 - Consequential negative calls are asserted not to create authorization or mutate protected counters/state.
@@ -10,7 +10,7 @@
 - Authorization tests cover caller, binding digest, action digest, revision and replay.
 - Constructor tests prove the deployer receives no implicit authority and a zero registry controller cannot be deployed.
 
-Studionet source parity and transaction evidence remain pending until a fresh deployment is supplied.
+Studionet source parity and transaction evidence are recorded in `studionet-verification.md`.
 
 ## Demo artifact SHA-256 values
 
