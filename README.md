@@ -49,12 +49,10 @@ python -m pip install -r requirements.txt
 python -m pytest -q
 ```
 
-Current result: **18 tests passed**. The suite covers positive authorization and consumption, wrong controller, wrong binding, wrong action, replay, short notice, incomplete notice, migration failure, digest tampering, identity mismatch, source outage, truncated Git tree, blob SHA-1 mismatch, malformed model schema, invalid inputs, deactivation and state preservation.
+Current result: **19 tests passed**. The suite covers positive authorization and consumption, canonical address encoding, wrong controller, wrong binding, wrong action, replay, short notice, incomplete notice, migration failure, digest tampering, identity mismatch, source outage, truncated Git tree, blob SHA-1 mismatch, malformed model schema, invalid inputs, deactivation and state preservation.
 
 See [architecture](docs/ARCHITECTURE.md), [threat model](docs/THREAT_MODEL.md), [deployment checklist](docs/DEPLOYMENT.md), and [local verification](verification/local-verification.md).
 
 ## Deployment status
 
-Studionet contract: [`0x24AeaF2815c5b12DcbaBB09992fc6eB6f3Ce7c31`](https://explorer-studio.genlayer.com/address/0x24AeaF2815c5b12DcbaBB09992fc6eB6f3Ce7c31).
-
-The deployed source exactly matches the locally reviewed source. Publish this repository and pin the evidence to its immutable full commit before registering the service. Studionet lifecycle evidence is still required before submission.
+The first Studionet deployment exposed a runtime-specific address serialization defect during registration and is superseded. The corrected source is ready for a fresh deployment; no lifecycle evidence from the superseded instance is claimed.

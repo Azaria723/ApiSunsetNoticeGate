@@ -1,7 +1,7 @@
 # Local verification
 
-- Direct Mode contract tests: `18 passed`.
-- Contract source SHA-256: `e367aeea253705d3828b1ee4d31237e909f4412fa1da796e72abe1706bf0b2e7`.
+- Direct Mode contract tests: `19 passed`.
+- Contract source SHA-256: `edced5ba35cfddd91b2ced31bde808e02a5b0a96854fbd8a0a080b1d5da7127a`.
 - Contract runner and dependency are pinned to `genlayer-test 0.2.16` metadata.
 - Web and LLM access use strict mocks.
 - Consequential negative calls are asserted not to create authorization or mutate protected counters/state.

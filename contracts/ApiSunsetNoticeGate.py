@@ -31,9 +31,14 @@ class ApiSunsetNoticeGate(gl.Contract):
         return hashlib.sha256(body).hexdigest()
 
     def _address_text(self, value: Address) -> str:
+        if hasattr(value, "as_hex"):
+            return value.as_hex
         if isinstance(value, bytes):
             return "0x" + value.hex()
-        return str(value)
+        numeric = int(value)
+        if numeric < 0 or numeric >= 2 ** 160:
+            return ""
+        return "0x" + format(numeric, "040x")
 
     def _hex(self, value: str, length: int) -> bool:
         return len(value) == length and all(c in "0123456789abcdefABCDEF" for c in value)
@@ -95,7 +100,8 @@ class ApiSunsetNoticeGate(gl.Contract):
             return "INVALID_POLICY_SOURCE"
         if int(minimum_notice_days) < 1 or int(minimum_notice_days) > 730:
             return "INVALID_NOTICE_PERIOD"
-        if sunset_controller == Address("0x0000000000000000000000000000000000000000"):
+        controller_text = self._address_text(sunset_controller)
+        if controller_text == "0x0000000000000000000000000000000000000000" or controller_text == "":
             return "INVALID_CONTROLLER"
         for index in range(int(self.service_count)):
             current = json.loads(self.services[u256(index)])
@@ -105,7 +111,7 @@ class ApiSunsetNoticeGate(gl.Contract):
                 return "DOMAIN_ALREADY_REGISTERED"
         service_id = self.service_count
         service = {
-            "active": 1, "controller": self._address_text(sunset_controller), "current_revision": 1,
+            "active": 1, "controller": controller_text, "current_revision": 1,
             "minimum_notice_days": int(minimum_notice_days), "policy_commit": policy_commit.lower(),
             "policy_path": policy_path, "policy_sha256": policy_sha256.lower(), "repo_name": repo_name,
             "repo_owner": repo_owner, "represented_domain": represented_domain, "service_id": int(service_id),

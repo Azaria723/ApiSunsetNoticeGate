@@ -119,6 +119,7 @@ def test_invalid_inputs_and_authority_preserve_state(direct_vm,direct_deploy,dir
     c=deploy(direct_vm,direct_deploy,direct_alice)
     with direct_vm.prank(direct_bob): assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,direct_bob)=="OWNER_ONLY"
     with direct_vm.prank(direct_alice): assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,"/../policy",sha(POLICY),90,direct_bob)=="INVALID_POLICY_SOURCE"
+    with direct_vm.prank(direct_alice): assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,b"\x00"*20)=="INVALID_CONTROLLER"
     assert json.loads(c.get_counts())["service_count"]==0
     register(direct_vm,c,direct_alice,direct_bob)
     with direct_vm.prank(direct_bob): assert c.propose_sunset(*proposal_args()[:2]+["https://evil.example"]+proposal_args()[3:])=="INVALID_ENDPOINT"
