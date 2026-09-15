@@ -1,0 +1,4 @@
+POST /v1/payments
+Purpose: create one payment.
+Required request capabilities: amount, three-letter currency, idempotency key.
+Successful response capability: stable payment identifier and creation status.
