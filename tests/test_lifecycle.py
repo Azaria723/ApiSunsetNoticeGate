@@ -143,3 +143,10 @@ def test_zero_registry_controller_cannot_be_deployed(direct_vm,direct_deploy,dir
     direct_vm.strict_mocks=True;direct_vm.check_pickling=True
     with direct_vm.prank(direct_alice), pytest.raises(Exception, match="INVALID_REGISTRY_CONTROLLER"):
         direct_deploy("contracts/ApiSunsetNoticeGate.py", b"\x00"*20)
+
+def test_hex_string_controller_is_canonicalized(direct_vm,direct_deploy,direct_alice,direct_bob):
+    c=deploy(direct_vm,direct_deploy,direct_alice)
+    controller="0x"+direct_bob.hex().upper()
+    with direct_vm.prank(direct_alice):
+        assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,controller)==0
+    assert json.loads(c.get_service(0))["controller"]=="0x"+direct_bob.hex()

@@ -38,6 +38,10 @@ class ApiSunsetNoticeGate(gl.Contract):
             return value.as_hex
         if isinstance(value, bytes):
             return "0x" + value.hex()
+        if isinstance(value, str):
+            if len(value) == 42 and value[:2].lower() == "0x" and self._hex(value[2:], 40):
+                return "0x" + value[2:].lower()
+            return ""
         numeric = int(value)
         if numeric < 0 or numeric >= 2 ** 160:
             return ""
