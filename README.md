@@ -21,7 +21,7 @@ canonical GitHub provenance
 
 ## Canonical acquisition
 
-The requester cannot supply a host or URL. From the owner-registered repository and submitted full commits, validators independently retrieve:
+The requester cannot supply a host or URL. From the registry-controller-approved repository and submitted full commits, validators independently retrieve:
 
 1. GitHub Commit API records;
 2. recursive Git trees, requiring `truncated = false`;
@@ -49,10 +49,10 @@ python -m pip install -r requirements.txt
 python -m pytest -q
 ```
 
-Current result: **19 tests passed**. The suite covers positive authorization and consumption, canonical address encoding, wrong controller, wrong binding, wrong action, replay, short notice, incomplete notice, migration failure, digest tampering, identity mismatch, source outage, truncated Git tree, blob SHA-1 mismatch, malformed model schema, invalid inputs, deactivation and state preservation.
+Current result: **22 tests passed**. The suite covers positive authorization and consumption, constructor-injected registry authority, absence of deployer privilege, canonical address encoding, wrong controller, wrong binding, wrong action, replay, short notice, incomplete notice, migration failure, digest tampering, identity mismatch, source outage, truncated Git tree, blob SHA-1 mismatch, malformed model schema, invalid inputs, deactivation and state preservation.
 
 See [architecture](docs/ARCHITECTURE.md), [threat model](docs/THREAT_MODEL.md), [deployment checklist](docs/DEPLOYMENT.md), and [local verification](verification/local-verification.md).
 
 ## Deployment status
 
-The first Studionet deployment exposed a runtime-specific address serialization defect during registration and is superseded. The corrected source is ready for a fresh deployment; no lifecycle evidence from the superseded instance is claimed.
+The first Studionet deployment exposed a runtime-specific address serialization defect during registration and is superseded. The corrected source also removes implicit deployer authority: deployment now requires an explicit registry-controller constructor argument. No lifecycle evidence from the superseded instance is claimed.

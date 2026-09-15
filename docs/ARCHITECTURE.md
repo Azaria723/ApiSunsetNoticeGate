@@ -2,7 +2,7 @@
 
 ## State model
 
-A service is an owner-curated authority record containing repository identity, policy coordinates, notice-period policy, controller and monotonic revision. A proposal is append-only and captures one exact endpoint retirement plus immutable evidence coordinates and authorization constraints.
+A service is a registry-controller-curated authority record containing repository identity, policy coordinates, notice-period policy, sunset controller and monotonic revision. A proposal is append-only and captures one exact endpoint retirement plus immutable evidence coordinates and authorization constraints. The registry controller is supplied explicitly to the constructor; the deployer receives no implicit role.
 
 ```text
 PENDING → AUTHORIZED → CONSUMED

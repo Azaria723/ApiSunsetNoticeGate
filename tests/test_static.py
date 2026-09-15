@@ -13,5 +13,7 @@ def test_authorization_is_bound_and_single_use():
     for term in ["authorization_digest","action_digest","service_revision","expires_at","AUTHORIZATION_ALREADY_CONSUMED"]:assert term in S
 def test_addresses_are_canonical_hex_not_runtime_stringification():
     assert 'format(numeric, "040x")' in S;assert 'return value.as_hex' in S
+def test_deployer_has_no_implicit_privilege():
+    assert "self.owner" not in S;assert "self.registry_controller = controller_text" in S;assert "REGISTRY_CONTROLLER_ONLY" in S
 def test_no_custody_or_arbitrary_execution():
     assert "emit_transfer" not in S and "payable" not in S and "exec(" not in S

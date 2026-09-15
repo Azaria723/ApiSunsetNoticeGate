@@ -15,9 +15,9 @@ NEW=b"POST /v2/payments creates a payment with amount, currency, and a newly gen
 
 def sha(body): return hashlib.sha256(body).hexdigest()
 def blob(body): return hashlib.sha1((f"blob {len(body)}\0").encode()+body).hexdigest()
-def deploy(vm, direct_deploy, actor):
+def deploy(vm, direct_deploy, actor, registry=None):
     vm.strict_mocks=True; vm.check_pickling=True
-    with vm.prank(actor): return direct_deploy("contracts/ApiSunsetNoticeGate.py")
+    with vm.prank(actor): return direct_deploy("contracts/ApiSunsetNoticeGate.py", registry or actor)
 def register(vm,c,owner,controller):
     with vm.prank(owner):
         assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,controller)==0
@@ -117,7 +117,7 @@ def test_malformed_or_extra_model_fields_are_unresolved(direct_vm,direct_deploy,
 
 def test_invalid_inputs_and_authority_preserve_state(direct_vm,direct_deploy,direct_alice,direct_bob):
     c=deploy(direct_vm,direct_deploy,direct_alice)
-    with direct_vm.prank(direct_bob): assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,direct_bob)=="OWNER_ONLY"
+    with direct_vm.prank(direct_bob): assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,direct_bob)=="REGISTRY_CONTROLLER_ONLY"
     with direct_vm.prank(direct_alice): assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,"/../policy",sha(POLICY),90,direct_bob)=="INVALID_POLICY_SOURCE"
     with direct_vm.prank(direct_alice): assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,b"\x00"*20)=="INVALID_CONTROLLER"
     assert json.loads(c.get_counts())["service_count"]==0
@@ -129,3 +129,17 @@ def test_deactivation_stales_pending_proposal(direct_vm,direct_deploy,direct_ali
     c=deploy(direct_vm,direct_deploy,direct_alice);register(direct_vm,c,direct_alice,direct_bob);propose(direct_vm,c,direct_bob)
     with direct_vm.prank(direct_alice): assert c.deactivate_service(0)=="SERVICE_DEACTIVATED"
     assert c.assess_sunset(0)=="SERVICE_REVISION_STALE"; assert record(c)["assessed"]==0
+
+def test_deployer_has_no_registry_privilege(direct_vm,direct_deploy,direct_alice,direct_bob,direct_charlie):
+    c=deploy(direct_vm,direct_deploy,direct_alice,registry=direct_bob)
+    with direct_vm.prank(direct_alice):
+        assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,direct_charlie)=="REGISTRY_CONTROLLER_ONLY"
+    assert json.loads(c.get_counts())["service_count"]==0
+    with direct_vm.prank(direct_bob):
+        assert c.register_service(SERVICE,DOMAIN,OWNER,REPO,POLICY_COMMIT,POLICY_PATH,sha(POLICY),90,direct_charlie)==0
+    assert json.loads(c.get_counts())["registry_controller"].lower()==("0x"+direct_bob.hex()).lower()
+
+def test_zero_registry_controller_cannot_be_deployed(direct_vm,direct_deploy,direct_alice):
+    direct_vm.strict_mocks=True;direct_vm.check_pickling=True
+    with direct_vm.prank(direct_alice), pytest.raises(Exception, match="INVALID_REGISTRY_CONTROLLER"):
+        direct_deploy("contracts/ApiSunsetNoticeGate.py", b"\x00"*20)

@@ -9,14 +9,17 @@ import typing
 
 
 class ApiSunsetNoticeGate(gl.Contract):
-    owner: Address
+    registry_controller: str
     service_count: u256
     proposal_count: u256
     services: TreeMap[u256, str]
     proposals: TreeMap[u256, str]
 
-    def __init__(self):
-        self.owner = gl.message.sender_address
+    def __init__(self, registry_controller: Address):
+        controller_text = self._address_text(registry_controller)
+        if controller_text == "0x0000000000000000000000000000000000000000" or controller_text == "":
+            raise ValueError("INVALID_REGISTRY_CONTROLLER")
+        self.registry_controller = controller_text
         self.service_count = u256(0)
         self.proposal_count = u256(0)
 
@@ -88,8 +91,8 @@ class ApiSunsetNoticeGate(gl.Contract):
     def register_service(self, service_key: str, represented_domain: str, repo_owner: str, repo_name: str,
                          policy_commit: str, policy_path: str, policy_sha256: str, minimum_notice_days: u256,
                          sunset_controller: Address) -> typing.Any:
-        if gl.message.sender_address != self.owner:
-            return "OWNER_ONLY"
+        if self._address_text(gl.message.sender_address).lower() != self.registry_controller.lower():
+            return "REGISTRY_CONTROLLER_ONLY"
         if not self._marker(service_key, 3, 64):
             return "INVALID_SERVICE_KEY"
         if not self._hostname(represented_domain):
@@ -126,8 +129,8 @@ class ApiSunsetNoticeGate(gl.Contract):
         if service_id >= self.service_count:
             return "SERVICE_NOT_FOUND"
         service = json.loads(self.services[service_id])
-        if gl.message.sender_address != self.owner:
-            return "OWNER_ONLY"
+        if self._address_text(gl.message.sender_address).lower() != self.registry_controller.lower():
+            return "REGISTRY_CONTROLLER_ONLY"
         if service["active"] != 1:
             return "SERVICE_ALREADY_INACTIVE"
         service["active"] = 0
@@ -351,7 +354,8 @@ class ApiSunsetNoticeGate(gl.Contract):
 
     @gl.public.view
     def get_counts(self) -> str:
-        return json.dumps({"proposal_count": int(self.proposal_count), "service_count": int(self.service_count)}, sort_keys=True)
+        return json.dumps({"proposal_count": int(self.proposal_count), "registry_controller": self.registry_controller,
+                           "service_count": int(self.service_count)}, sort_keys=True)
 
     @gl.public.view
     def get_service(self, service_id: u256) -> str:

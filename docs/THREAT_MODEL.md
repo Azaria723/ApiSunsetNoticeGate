@@ -16,8 +16,8 @@ The test suite covers URL-like endpoints, traversal paths, invalid commits, sour
 
 ## Trust assumptions
 
-The contract owner is trusted to register the correct repository and controller. Repository maintainers are authoritative for content committed in that repository. GenLayer consensus is trusted according to its protocol assumptions. A downstream gateway must independently require the exact stored authorization and action digest.
+The constructor-selected registry controller is trusted to register the correct repository and sunset controller. The deployer has no implicit privilege. Repository maintainers are authoritative for content committed in that repository. GenLayer consensus is trusted according to its protocol assumptions. A downstream gateway must independently require the exact stored authorization and action digest.
 
 ## Non-goals
 
-This contract does not shut down infrastructure, custody funds, prove repository ownership outside owner curation, determine legal compliance, inspect runtime traffic, or guarantee that a replacement implementation behaves exactly like its documentation.
+This contract does not shut down infrastructure, custody funds, prove repository ownership outside registry curation, determine legal compliance, inspect runtime traffic, or guarantee that a replacement implementation behaves exactly like its documentation.
