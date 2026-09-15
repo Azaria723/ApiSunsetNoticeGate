@@ -55,4 +55,6 @@ See [architecture](docs/ARCHITECTURE.md), [threat model](docs/THREAT_MODEL.md), 
 
 ## Deployment status
 
-The contract is locally verified. Before deployment, publish this repository, pin the evidence to its immutable commit, compute the five SHA-256 values, then deploy the exact reviewed source. Studionet lifecycle evidence is still required before submission.
+Studionet contract: [`0x24AeaF2815c5b12DcbaBB09992fc6eB6f3Ce7c31`](https://explorer-studio.genlayer.com/address/0x24AeaF2815c5b12DcbaBB09992fc6eB6f3Ce7c31).
+
+The deployed source exactly matches the locally reviewed source. Publish this repository and pin the evidence to its immutable full commit before registering the service. Studionet lifecycle evidence is still required before submission.
